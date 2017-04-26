@@ -1,6 +1,7 @@
-(ns duct.compiler.sass)
+(ns duct.compiler.sass
+  (:require [integrant.core :as ig]))
 
-(defn foo
-  "I don't do a whole lot."
-  [x]
-  (println x "Hello, World!"))
+(derive :duct.compiler/sass :duct/compiler)
+
+(defmethod ig/init-key :duct.compiler/sass [_ options]
+  [])
