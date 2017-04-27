@@ -55,7 +55,9 @@
     (run! (fn [[in out]] (compile-sass in out)) in->out)
     (compile-results in->out)))
 
-(defmethod ig/resume-key :duct.compiler/sass [key opts _ {:keys [timestamps]}]
-  (let [in->out (file-mapping opts)]
-    (run! (fn [[in out]] (compile-sass in out)) (remove-unchanged in->out timestamps))
-    (compile-results in->out)))
+(defmethod ig/resume-key :duct.compiler/sass [key opts old-opts {:keys [timestamps]}]
+  (if (= opts old-opts)
+    (let [in->out (file-mapping opts)]
+      (run! (fn [[in out]] (compile-sass in out)) (remove-unchanged in->out timestamps))
+      (compile-results in->out))
+    (ig/init-key key opts)))
