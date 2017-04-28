@@ -1,7 +1,20 @@
 (ns duct.compiler.sass-test
-  (:require [clojure.test :refer :all]
-            [duct.compiler.sass :refer :all]))
+  (:require [clojure.java.io :as io]
+            [clojure.test :refer :all]
+            [duct.compiler.sass :as sass]
+            [integrant.core :as ig]))
 
-(deftest a-test
-  (testing "FIXME, I fail."
-    (is (= 0 1))))
+(def config
+  {:duct.compiler/sass
+   {:source-paths ["test"]
+    :output-path  "target/test"}})
+
+(deftest module-test
+  (let [f (io/file "target/test/sass/test.css")]
+    (try
+      (io/delete-file f true)
+      (ig/init config)
+      (is (.exists f))
+      (is (= (slurp f) "body {\n  font: 100% Helvetica, sans-serif;\n  color: #333; }\n"))
+      (finally
+        (io/delete-file f true)))))
