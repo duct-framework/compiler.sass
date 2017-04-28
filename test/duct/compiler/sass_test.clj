@@ -10,11 +10,12 @@
     :output-path  "target/test"}})
 
 (deftest module-test
-  (let [f (io/file "target/test/sass/test.css")]
+  (let [expected (io/file "test/sass/test.css")
+        actual   (io/file "target/test/sass/test.css")]
     (try
-      (io/delete-file f true)
+      (io/delete-file actual true)
       (ig/init config)
-      (is (.exists f))
-      (is (= (slurp f) "body {\n  font: 100% Helvetica, sans-serif;\n  color: #333; }\n"))
+      (is (.exists actual))
+      (is (= (slurp expected) (slurp actual)))
       (finally
-        (io/delete-file f true)))))
+        (io/delete-file actual true)))))
