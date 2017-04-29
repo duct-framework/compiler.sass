@@ -1,5 +1,5 @@
 (ns duct.compiler.sass
-  (:import [io.bit3.jsass Options]
+  (:import [io.bit3.jsass Options OutputStyle]
            [io.bit3.jsass.context FileContext])
   (:require [clojure.java.io :as io]
             [clojure.string :as str]
@@ -35,8 +35,18 @@
 (defn- timestamp-map [files]
   (into {} (map (juxt identity #(.lastModified %)) files)))
 
-(defn- compile-sass [in out]
-  (let [context (FileContext. (.toURI in) (.toURI out) (Options.))
+(def ^:private output-styles
+  {:compact    OutputStyle/COMPACT
+   :compressed OutputStyle/COMPRESSED
+   :expanded   OutputStyle/EXPANDED
+   :nested     OutputStyle/NESTED})
+
+(defn- make-options [opts]
+  (doto (Options.)
+    (.setOutputStyle (output-styles (:output-style opts :nested)))))
+
+(defn- compile-sass [in out opts]
+  (let [context (FileContext. (.toURI in) (.toURI out) (make-options opts))
         result  (.compile compiler context)]
     (.mkdirs (.getParentFile out))
     (spit out (.getCss result))))
@@ -52,12 +62,12 @@
 
 (defmethod ig/init-key :duct.compiler/sass [_ opts]
   (let [in->out (file-mapping opts)]
-    (run! (fn [[in out]] (compile-sass in out)) in->out)
+    (run! (fn [[in out]] (compile-sass in out opts)) in->out)
     (compile-results in->out)))
 
 (defmethod ig/resume-key :duct.compiler/sass [key opts old-opts {:keys [timestamps]}]
   (if (= opts old-opts)
     (let [in->out (file-mapping opts)]
-      (run! (fn [[in out]] (compile-sass in out)) (remove-unchanged in->out timestamps))
+      (run! (fn [[in out]] (compile-sass in out opts)) (remove-unchanged in->out timestamps))
       (compile-results in->out))
     (ig/init-key key opts)))
