@@ -11,13 +11,13 @@
 
 (def config
   {:duct.compiler/sass
-   {:source-paths ["test"]
-    :output-path  "target/test"}})
+   {:source-paths ["test/sass"]
+    :output-path  "target/test/output"}})
 
-(deftest module-test
+(deftest init-test
   (testing "normal output"
     (let [expected (io/file "test/sass/test.css")
-          actual   (io/file "target/test/sass/test.css")]
+          actual   (io/file "target/test/output/test.css")]
       (with-temp-file actual
         (ig/init config)
         (is (.exists actual))
@@ -25,8 +25,23 @@
 
   (testing "compressed output"
     (let [expected (io/file "test/sass/test.compressed.css")
-          actual   (io/file "target/test/sass/test.css")]
+          actual   (io/file "target/test/output/test.css")]
       (with-temp-file actual
         (ig/init (assoc-in config [:duct.compiler/sass :output-style] :compressed))
         (is (.exists actual))
         (is (= (slurp expected) (slurp actual)))))))
+
+(deftest resume-test
+  (.mkdirs (io/file "target/test/temp"))
+  (let [source (io/file "target/test/temp/test.scss")]
+    (with-temp-file source
+      (io/copy (io/file "test/sass/test.scss") source)
+      (let [config (assoc-in config [:duct.compiler/sass :source-paths] ["target/test/temp"])
+            system (ig/init config)]
+        (Thread/sleep 1000)
+        (io/copy (io/file "test/sass/test2.scss") source)
+        (prn (slurp source))
+        (ig/resume config system)
+        (let [output (io/file "target/test/output/test.css")]
+          (is (.exists output))
+          (is (= (slurp output) (slurp (io/file "test/sass/test2.css")))))))))
