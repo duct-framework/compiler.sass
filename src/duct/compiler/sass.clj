@@ -24,8 +24,12 @@
       (str/replace re-ext ".css")
       (as-> f (io/file output-path f))))
 
+(defn- partial-file? [f]
+  (re-find #"/_[^/]*?$" (str f)))
+
 (defn- file-mapping-1 [source-path output-path]
   (->> (find-files source-path ["scss" "sass"])
+       (remove partial-file?)
        (map (juxt identity #(css-output-file % source-path output-path)))
        (into {})))
 

@@ -44,6 +44,7 @@
           actual   (io/file "target/test/output/test4.css")]
       (with-temp-file actual
         (ig/init config)
+        (is (not (.exists (io/file "target/test/output/_reset.css"))))
         (is (.exists actual))
         (is (= (slurp expected) (slurp actual)))))))
 
