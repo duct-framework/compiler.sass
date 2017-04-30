@@ -51,7 +51,8 @@
 
 (defn- make-options [opts]
   (doto (Options.)
-    (.setOutputStyle (output-styles (:output-style opts :nested)))))
+    (.setOutputStyle (output-styles (:output-style opts :nested)))
+    (.setIndent (:indent opts "  "))))
 
 (defn- compile-sass [in out opts]
   (let [context (FileContext. (.toURI in) (.toURI out) (make-options opts))

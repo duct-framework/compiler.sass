@@ -31,6 +31,14 @@
         (is (.exists actual))
         (is (= (slurp expected) (slurp actual))))))
 
+  (testing "different indent"
+    (let [expected (io/file "test/sass/test.indent.css")
+          actual   (io/file "target/test/output/test.css")]
+      (with-temp-file actual
+        (ig/init (assoc-in config [:duct.compiler/sass :indent] "    "))
+        (is (.exists actual))
+        (is (= (slurp expected) (slurp actual))))))
+
   (testing "sass input"
     (let [expected (io/file "test/sass/test.css")
           actual   (io/file "target/test/output/test3.css")]
