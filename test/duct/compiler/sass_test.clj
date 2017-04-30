@@ -37,6 +37,14 @@
       (with-temp-file actual
         (ig/init config)
         (is (.exists actual))
+        (is (= (slurp expected) (slurp actual))))))
+
+  (testing "imports"
+    (let [expected (io/file "test/sass/test4.css")
+          actual   (io/file "target/test/output/test4.css")]
+      (with-temp-file actual
+        (ig/init config)
+        (is (.exists actual))
         (is (= (slurp expected) (slurp actual)))))))
 
 (deftest resume-test
