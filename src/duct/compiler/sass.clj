@@ -8,7 +8,8 @@
 
 (def ^:private compiler (io.bit3.jsass.Compiler.))
 
-(def ^:private re-ext #"\.([^/]*?)$")
+(def ^:private re-ext
+  (re-pattern (str "\\.([^\\" java.io.File/separator "]*?)$")))
 
 (defn- file-ext [f]
   (second (re-find re-ext (str f))))
@@ -24,8 +25,11 @@
       (str/replace re-ext ".css")
       (as-> f (io/file output-path f))))
 
+(def ^:private re-partial
+  (re-pattern (str "_[^\\" java.io.File/separator "]*?$")))
+
 (defn- partial-file? [f]
-  (re-find #"/_[^/]*?$" (str f)))
+  (re-find re-partial (str f)))
 
 (defn- file-mapping-1 [source-path output-path]
   (->> (find-files source-path ["scss" "sass"])
