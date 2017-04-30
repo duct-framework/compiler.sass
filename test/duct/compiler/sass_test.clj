@@ -57,7 +57,6 @@
             system (ig/init config)]
         (Thread/sleep 1000)
         (io/copy (io/file "test/sass/test2.scss") source)
-        (prn (slurp source))
         (ig/resume config system)
         (let [output (io/file "target/test/output/test.css")]
           (is (.exists output))
