@@ -60,8 +60,13 @@
     (.mkdirs (.getParentFile out))
     (spit out (.getCss result))))
 
+(defn- file-modified? [file->timestamp file]
+  (if-let [timestamp (file->timestamp file)]
+    (< timestamp (.lastModified file))
+    true))
+
 (defn- remove-unchanged [in->out file->timestamp]
-  (m/filter-keys #(some-> (file->timestamp %) (< (.lastModified %))) in->out))
+  (m/filter-keys (partial file-modified? file->timestamp) in->out))
 
 (defn- compile-results [in->out]
   {:output     (map (comp str val) in->out)
