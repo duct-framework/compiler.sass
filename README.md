@@ -1,5 +1,7 @@
 # Duct compiler.sass
 
+[![Build Status](https://travis-ci.org/duct-framework/compiler.sass.svg?branch=master)](https://travis-ci.org/duct-framework/compiler.sass)
+
 [Integrant][] methods for compiling [Sass][] files to CSS in
 the [Duct][] framework.
 
