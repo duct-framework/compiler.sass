@@ -3,6 +3,7 @@
            [io.bit3.jsass.context FileContext])
   (:require [clojure.java.io :as io]
             [clojure.string :as str]
+            [duct.logger :as log]
             [integrant.core :as ig]
             [medley.core :as m]))
 
@@ -54,7 +55,8 @@
     (.setOutputStyle (output-styles (:output-style opts :nested)))
     (.setIndent (:indent opts "  "))))
 
-(defn- compile-sass [in out opts]
+(defn- compile-sass [in out {:keys [logger] :as opts}]
+  (log/log logger :info ::compiling {:in (str in) :out (str out)})
   (let [context (FileContext. (.toURI in) (.toURI out) (make-options opts))
         result  (.compile compiler context)]
     (.mkdirs (.getParentFile out))
@@ -80,7 +82,7 @@
     (compile-results in->out)))
 
 (defmethod ig/resume-key :duct.compiler/sass [key opts old-opts {:keys [timestamps]}]
-  (if (= opts old-opts)
+  (if (= (dissoc opts :logger) (dissoc old-opts :logger))
     (let [in->out (file-mapping opts)]
       (run! (fn [[in out]] (compile-sass in out opts)) (remove-unchanged in->out timestamps))
       (compile-results in->out))
