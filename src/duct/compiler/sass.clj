@@ -67,9 +67,6 @@
     (< timestamp (.lastModified file))
     true))
 
-(defn- remove-unchanged [in->out file->timestamp]
-  (m/filter-keys (partial file-modified? file->timestamp) in->out))
-
 (defn- compile-results [in->out]
   {:output     (map (comp str val) in->out)
    :timestamps (timestamp-map (keys in->out))})
@@ -78,12 +75,15 @@
 
 (defmethod ig/init-key :duct.compiler/sass [_ opts]
   (let [in->out (file-mapping opts)]
-    (run! (fn [[in out]] (compile-sass in out opts)) in->out)
+    (doseq [[in out] in->out]
+      (compile-sass in out opts))
     (compile-results in->out)))
 
 (defmethod ig/resume-key :duct.compiler/sass [key opts old-opts {:keys [timestamps]}]
   (if (= (dissoc opts :logger) (dissoc old-opts :logger))
     (let [in->out (file-mapping opts)]
-      (run! (fn [[in out]] (compile-sass in out opts)) (remove-unchanged in->out timestamps))
+      (doseq [[in out] in->out]
+        (when (file-modified? timestamps in)
+          (compile-sass in out opts)))
       (compile-results in->out))
     (ig/init-key key opts)))
