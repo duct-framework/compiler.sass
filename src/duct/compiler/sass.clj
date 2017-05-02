@@ -62,28 +62,10 @@
     (.mkdirs (.getParentFile out))
     (spit out (.getCss result))))
 
-(defn- file-modified? [file->timestamp file]
-  (if-let [timestamp (file->timestamp file)]
-    (< timestamp (.lastModified file))
-    true))
-
-(defn- compile-results [in->out]
-  {:output     (map (comp str val) in->out)
-   :timestamps (timestamp-map (keys in->out))})
-
 (derive :duct.compiler/sass :duct/compiler)
 
 (defmethod ig/init-key :duct.compiler/sass [_ opts]
   (let [in->out (file-mapping opts)]
     (doseq [[in out] in->out]
       (compile-sass in out opts))
-    (compile-results in->out)))
-
-(defmethod ig/resume-key :duct.compiler/sass [key opts old-opts {:keys [timestamps]}]
-  (if (= (dissoc opts :logger) (dissoc old-opts :logger))
-    (let [in->out (file-mapping opts)]
-      (doseq [[in out] in->out]
-        (when (file-modified? timestamps in)
-          (compile-sass in out opts)))
-      (compile-results in->out))
-    (ig/init-key key opts)))
+    (mapv (comp str val) in->out)))
