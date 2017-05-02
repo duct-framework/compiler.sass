@@ -50,17 +50,23 @@
    :expanded   OutputStyle/EXPANDED
    :nested     OutputStyle/NESTED})
 
-(defn- make-options [opts]
+(defn- source-map-uri [file]
+  (.toURI (io/file (str file ".map"))))
+
+(defn- make-options [in out opts]
   (doto (Options.)
     (.setOutputStyle (output-styles (:output-style opts :nested)))
-    (.setIndent (:indent opts "  "))))
+    (.setIndent (:indent opts "  "))
+    (.setSourceMapFile (if (:source-map? opts) (source-map-uri out)))))
 
 (defn- compile-sass [in out {:keys [logger] :as opts}]
   (log/log logger :info ::compiling {:in (str in) :out (str out)})
-  (let [context (FileContext. (.toURI in) (.toURI out) (make-options opts))
+  (let [context (FileContext. (.toURI in) (.toURI out) (make-options in out opts))
         result  (.compile compiler context)]
     (.mkdirs (.getParentFile out))
-    (spit out (.getCss result))))
+    (spit out (.getCss result))
+    (when-let [source-map (.getSourceMap result)]
+      (spit (source-map-uri out) source-map))))
 
 (defmethod ig/init-key :duct.compiler/sass [_ opts]
   (let [in->out (file-mapping opts)]

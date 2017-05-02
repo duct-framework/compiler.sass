@@ -55,4 +55,16 @@
         (ig/init config)
         (is (not (.exists (io/file "target/test/output/_reset.css"))))
         (is (.exists actual))
-        (is (= (slurp expected) (slurp actual)))))))
+        (is (= (slurp expected) (slurp actual))))))
+
+  (testing "source maps"
+    (let [expected     (io/file "test/sass/test4.source-map.css")
+          actual       (io/file "target/test/output/test4.css")
+          expected-map (io/file "test/sass/test4.source-map.css.map")
+          actual-map   (io/file "target/test/output/test4.css.map")]
+      (with-temp-files [actual actual-map]
+        (ig/init (assoc-in config [:duct.compiler/sass :source-map?] true))
+        (is (.exists actual))
+        (is (.exists actual-map))
+        (is (= (slurp expected) (slurp actual)))
+        (is (= (slurp expected-map) (slurp actual-map)))))))
