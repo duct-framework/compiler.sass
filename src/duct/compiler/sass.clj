@@ -62,8 +62,6 @@
     (.mkdirs (.getParentFile out))
     (spit out (.getCss result))))
 
-(derive :duct.compiler/sass :duct/compiler)
-
 (defmethod ig/init-key :duct.compiler/sass [_ opts]
   (let [in->out (file-mapping opts)]
     (doseq [[in out] in->out]
