@@ -1,4 +1,4 @@
-(defproject duct/compiler.sass "0.1.1"
+(defproject duct/compiler.sass "0.2.0"
   :description "Integrant methods for compiling Sass into CSS"
   :url "https://github.com/duct-framework/compiler.sass"
   :license {:name "Eclipse Public License"
