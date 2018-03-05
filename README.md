@@ -55,7 +55,7 @@ default), `:expanded`, `:compact` or `:compressed`:
 
 ## License
 
-Copyright © 2017 James Reeves
+Copyright © 2018 James Reeves
 
 Distributed under the Eclipse Public License either version 1.0 or (at
 your option) any later version.
