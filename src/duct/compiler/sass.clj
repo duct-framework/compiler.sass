@@ -57,6 +57,7 @@
   (doto (Options.)
     (.setOutputStyle (output-styles (:output-style opts :nested)))
     (.setIndent (:indent opts "  "))
+    (.setIncludePaths (java.util.ArrayList. (map io/file (:include-paths opts))))
     (.setSourceMapFile (if (:source-map? opts) (source-map-uri out)))))
 
 (defn- compile-sass [in out {:keys [logger] :as opts}]
