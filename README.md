@@ -22,13 +22,17 @@ compile Sass files to CSS in development and production environments.
 
 ```edn
 {:duct.compiler/sass
- {:source-paths ["resources"]
-  :output-path  "target/resources"}}
+ {:source-paths  ["resources"]
+  :include-paths ["node_modules"]
+  :output-path   "target/resources"}}
 ```
 
 The two mandatory options are `:source-paths`, which is a collection
 of directory paths that the compiler searches, and `:output-path`,
 which is where the compiler will put the CSS it generates.
+
+The non-mandatory `:include-paths` option specify additional paths to
+lookup imported Sass files.
 
 So if you have a file `resources/public/main.scss`, the compiler will
 create a file `target/resources/public/main.css`.
