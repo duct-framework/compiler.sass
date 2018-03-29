@@ -13,7 +13,7 @@ the [Duct][] framework.
 
 To install, add the following to your project `:dependencies`:
 
-    [duct/compiler.sass "0.2.0"]
+    [duct/compiler.sass "0.2.1"]
 
 ## Usage
 
