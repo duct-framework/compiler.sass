@@ -1,5 +1,6 @@
 (ns duct.compiler.sass-test
-  (:require [clojure.java.io :as io]
+  (:require [clojure.data.json :as json]
+            [clojure.java.io :as io]
             [clojure.test :refer :all]
             [duct.compiler.sass :as sass]
             [integrant.core :as ig]))
@@ -67,4 +68,5 @@
         (is (.exists actual))
         (is (.exists actual-map))
         (is (= (slurp expected) (slurp actual)))
-        (is (= (slurp expected-map) (slurp actual-map)))))))
+        (is (= (json/read-str (slurp expected-map))
+               (json/read-str (slurp actual-map))))))))
