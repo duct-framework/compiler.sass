@@ -3,7 +3,6 @@
 	"file": "test4.css",
 	"sources": [
 		"../../../test/sass/test4.scss",
-		"../../../test/sass/test4.scss/JSASS_CUSTOM.scss",
 		"../../../test/sass/_reset.scss"
 	],
 	"names": [],
