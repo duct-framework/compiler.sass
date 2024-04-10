@@ -1,6 +1,4 @@
-# Duct compiler.sass
-
-[![Build Status](https://travis-ci.org/duct-framework/compiler.sass.svg?branch=master)](https://travis-ci.org/duct-framework/compiler.sass)
+# Duct compiler.sass [![Build Status](https://github.com/duct-framework/compiler.sass/actions/workflows/test.yml/badge.svg)](https://github.com/duct-framework/compiler.sass/actions/workflows/test.yml)
 
 [Integrant][] methods for compiling [Sass][] files to CSS in
 the [Duct][] framework.
